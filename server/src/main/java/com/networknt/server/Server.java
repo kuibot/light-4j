@@ -149,7 +149,9 @@ public class Server {
         Map<String, Object> startupConfig = Config.getInstance().getJsonMapConfig(STARTUP_CONFIG_NAME);
         if(startupConfig ==null || startupConfig.get(CONFIG_LOADER_CLASS) ==null){
             configLoader = new DefaultConfigLoader();
+            System.out.println("[INSIGHT] Loading default config");
         }else{
+            System.out.println("[INSIGHT] Loading config from " + startupConfig.get(CONFIG_LOADER_CLASS));
             try {
                 Class clazz = Class.forName((String) startupConfig.get(CONFIG_LOADER_CLASS));
                 configLoader = (IConfigLoader) clazz.getConstructor().newInstance();
