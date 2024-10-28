@@ -38,11 +38,11 @@
         </layout>
     </appender>
 
-    <root level="error">
+    <root level="debug">
         <appender-ref ref="stdout"/>
     </root>
 
-    <logger name="com.networknt" level="trace" additivity="false">
+    <logger name="com.networknt" level="debug" additivity="true">
         <appender-ref ref="log"/>
     </logger>
 

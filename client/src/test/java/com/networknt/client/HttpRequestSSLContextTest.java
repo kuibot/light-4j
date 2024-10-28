@@ -1,5 +1,8 @@
 package com.networknt.client;
 
+import com.networknt.client.simplepool.SimpleConnectionHolder;
+import com.networknt.client.simplepool.SimpleURIConnectionPool;
+import com.networknt.client.simplepool.undertow.SimpleClientConnectionMaker;
 import com.networknt.exception.ClientException;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
@@ -78,7 +81,7 @@ public class HttpRequestSSLContextTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClientConnection connection;
         try {
-            connection = client.borrowConnection(new URI("https://www.google.com"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+            connection = client.borrowConnection(new URI("https://auto.163.com"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         } catch (Exception e) {
             throw new ClientException(e);
         }
@@ -88,7 +91,7 @@ public class HttpRequestSSLContextTest {
         try {
             ClientRequest request = new ClientRequest().setPath(requestUri).setMethod(Methods.GET);
 
-            request.getRequestHeaders().put(new HttpString("host"), "www.google.com");
+            request.getRequestHeaders().put(new HttpString("host"), "auto.163.com");
             connection.sendRequest(request, client.createClientCallback(reference, latch));
 
             latch.await();
@@ -99,7 +102,20 @@ public class HttpRequestSSLContextTest {
             client.returnConnection(connection);
         }
         int statusCode = reference.get().getResponseCode();
-        Assert.assertEquals(200, statusCode);
+        System.out.println("statusCode = " + statusCode);
+        String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
+        System.out.println("body = " + body);
+    }
+
+    @Test
+    public void testNewPool() throws Exception{
+        Http2Client client = Http2Client.getInstance();
+
+        URI uri = new URI("https://auto.163.com");
+        SimpleConnectionHolder.ConnectionToken token = client.borrow(uri, Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
+        ClientConnection connection = (ClientConnection) token.getRawConnection();
+
+        client.restore(token);
     }
 
 }

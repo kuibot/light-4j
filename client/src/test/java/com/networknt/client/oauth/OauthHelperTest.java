@@ -221,7 +221,7 @@ public class OauthHelperTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testGetTokenResult() throws Exception {
         AuthorizationCodeRequest tokenRequest = new AuthorizationCodeRequest();
         tokenRequest.setClientId("test_client");
@@ -245,7 +245,7 @@ public class OauthHelperTest {
 
     @Test
     @Deprecated
-    @Ignore
+//    @Ignore
     public void testGetToken() throws Exception {
         AuthorizationCodeRequest tokenRequest = new AuthorizationCodeRequest();
         tokenRequest.setClientId("test_client");
@@ -281,7 +281,7 @@ public class OauthHelperTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testGetTokenKey() throws Exception {
         TokenKeyRequest request = new TokenKeyRequest("100");
         request.setClientId("test_client");
@@ -308,7 +308,7 @@ public class OauthHelperTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testTokenIntrospection() throws Exception {
         TokenIntrospectionRequest request = new TokenIntrospectionRequest("Simple Web Token");
         request.setClientId("test_client");
