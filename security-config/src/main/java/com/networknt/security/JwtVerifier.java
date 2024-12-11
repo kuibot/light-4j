@@ -133,8 +133,10 @@ public class JwtVerifier extends TokenVerifier {
                 } catch (Exception e) {
                     logger.error("Exception:", e);
                 }
-                certMap.put(kid, cert);
-                fingerPrints.add(FingerPrintUtil.getCertFingerPrint(cert));
+                if(cert != null) {
+                    certMap.put(kid, cert);
+                    fingerPrints.add(FingerPrintUtil.getCertFingerPrint(cert));
+                }
             }
         }
         logger.debug("Successfully cached Certificate");
@@ -310,7 +312,9 @@ public class JwtVerifier extends TokenVerifier {
      * Check if the claim has scope for the jwt token.
      *
      * @param jwt - jwt token
+     * @param pathPrefix - pathPrefix for the jwt token cache key
      * @return boolean true has scope, false no scope
+     * @throws InvalidJwtException - thrown when the token is malformed/invalid
      */
     public boolean isScopeInJwt(String jwt, String pathPrefix) throws InvalidJwtException {
         JwtClaims claims;

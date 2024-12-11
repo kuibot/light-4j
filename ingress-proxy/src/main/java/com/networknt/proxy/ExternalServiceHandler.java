@@ -105,7 +105,7 @@ public class ExternalServiceHandler implements MiddlewareHandler {
                             if(matcher.matches()) {
                                 matched = true;
                                 requestPath = matcher.replaceAll(rule.getReplace());
-                                if(logger.isTraceEnabled()) logger.trace("rewritten requestPath = " + requestPath);
+                                if(logger.isTraceEnabled()) logger.trace("rewritten requestPath = {}", requestPath);
                                 break;
                             }
                         }
@@ -135,19 +135,19 @@ public class ExternalServiceHandler implements MiddlewareHandler {
                     if(method.equalsIgnoreCase("GET")) {
                         request = requestBuilder.GET().build();
 
-                    /* handle DELETE request. */
+                        /* handle DELETE request. */
                     } else if(method.equalsIgnoreCase("DELETE")) {
                         request = requestBuilder.DELETE().build();
 
-                    /* handle POST request that potentially has body data */
+                        /* handle POST request that potentially has body data */
                     } else if(method.equalsIgnoreCase("POST")) {
                         request = this.handleBufferedRequestBody(exchange, requestBuilder, "POST");
 
-                    /* handle PUT request that potentially has body data */
+                        /* handle PUT request that potentially has body data */
                     } else if(method.equalsIgnoreCase("PUT")) {
                         request = this.handleBufferedRequestBody(exchange, requestBuilder, "PUT");
 
-                    /* handle PATCH request that potentially has body data */
+                        /* handle PATCH request that potentially has body data */
                     } else if(method.equalsIgnoreCase("PATCH")) {
                         request = this.handleBufferedRequestBody(exchange, requestBuilder, "PATCH");
 
@@ -172,7 +172,21 @@ public class ExternalServiceHandler implements MiddlewareHandler {
                         return;
                     }
 
-                    var response  = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    int maxRetries = config.getMaxConnectionRetries();
+                    int attempt = 0;
+                    HttpResponse<byte[]> response = null;
+                    while (attempt < maxRetries) {
+                        try {
+                            response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                            break; // Exit loop if request is successful
+                        } catch (IOException | InterruptedException e) {
+                            attempt++;
+                            if (attempt >= maxRetries) {
+                                throw e; // Rethrow the exception if max retries reached
+                            }
+                            logger.warn("Attempt {} failed, retrying...", attempt, e);
+                        }
+                    }
                     var responseHeaders = response.headers();
                     byte[] responseBody = response.body();
                     if(response.statusCode() >= 400) {
@@ -185,7 +199,7 @@ public class ExternalServiceHandler implements MiddlewareHandler {
                         // remove empty key in the response header start with a colon.
                         if (header.getKey() != null && !header.getKey().startsWith(":") && header.getValue().get(0) != null) {
                             for(String s : header.getValue()) {
-                                if(logger.isTraceEnabled()) logger.trace("Add response header key = " + header.getKey() + " value = " + s);
+                                if(logger.isTraceEnabled()) logger.trace("Add response header key = {} value = {}", header.getKey(), s);
                                 exchange.getResponseHeaders().add(new HttpString(header.getKey()), s);
                             }
                         }
