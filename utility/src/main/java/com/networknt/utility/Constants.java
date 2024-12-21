@@ -46,6 +46,13 @@ public class Constants {
     public static final String UNKOWN_STRING = "unknown";
     public static final String CSRF_STRING = "csrf";
     public static final String AUTHORIZATION_STRING = "authorization";
+    public static final String ATT_STRING = "att";
+    public static final String POS_STRING = "pos";
+    public static final String GRP_STRING = "grp";
+    public static final String HOST_STRING = "host";
+    public static final String GROUPS = "groups";
+    public static final String POSITIONS = "positions";
+    public static final String ATTRIBUTES = "attributes";
 
     // Swagger 2.0 operation header name
     public static final String SWAGGER_OPERATION_STRING = "swagger_operation";
