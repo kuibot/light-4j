@@ -59,6 +59,7 @@ public class ConsulRegistryTest {
     @Test
     public void doRegisterAndAvailable() throws Exception {
         // register
+        System.out.println("serviceUrl: " + serviceUrl);
         registry.doRegister(serviceUrl);
         registry.doRegister(serviceUrl2);
         Assert.assertTrue(client.isRegistered(serviceid));
