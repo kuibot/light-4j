@@ -29,12 +29,12 @@ public class Constants {
     public static final String ADM_PASSTHROUGH_STRING = "X-Adm-PassThrough";
 
     public static final String USER_ID_STRING = "user_id";
-    public static final String UID_STRING = "uid";
-    public static final String USER_TYPE_STRING = "user_type";
-    public static final String ROLES_STRING = "roles";
+    public static final String UID = "uid";
+    public static final String USER_TYPE = "user_type";
+    public static final String ROLES = "roles";
     public static final String CLIENT_ID_STRING = "client_id";
-    public static final String CID_STRING = "cid";
-    public static final String ISS_STRING = "iss";
+    public static final String CID = "cid";
+    public static final String ISS = "iss";
     public static final String CALLER_ID_STRING = "caller_id";
     public static final String SCOPE_CLIENT_ID_STRING = "scope_client_id";
     public static final String SCOPE_STRING = "scope";
@@ -43,16 +43,27 @@ public class Constants {
     public static final String PRIMARY_SCOPES = "primary_scopes";
     public static final String SECONDARY_SCOPES = "secondary_scopes";
     public static final String ENDPOINT_STRING = "endpoint";
-    public static final String UNKOWN_STRING = "unknown";
-    public static final String CSRF_STRING = "csrf";
+    public static final String UNKNOWN = "unknown";
+    public static final String CSRF = "csrf";
     public static final String AUTHORIZATION_STRING = "authorization";
-    public static final String ATT_STRING = "att";
-    public static final String POS_STRING = "pos";
-    public static final String GRP_STRING = "grp";
-    public static final String HOST_STRING = "host";
+    public static final String EID = "eid";
+    public static final String ATT = "att";
+    public static final String POS = "pos";
+    public static final String GRP = "grp";
+    public static final String ROLE = "role";
+    public static final String HOST = "host";
+    public static final String EML = "eml";
+    public static final String EMAIL = "email";
     public static final String GROUPS = "groups";
+    public static final String GROUP = "group";
     public static final String POSITIONS = "positions";
+    public static final String POSITION = "position";
     public static final String ATTRIBUTES = "attributes";
+    public static final String ATTRIBUTE = "attribute";
+    public static final String USERS = "users";
+    public static final String USER = "user";
+    public static final String COL = "col";
+    public static final String ROW = "row";
 
     // Swagger 2.0 operation header name
     public static final String SWAGGER_OPERATION_STRING = "swagger_operation";
@@ -74,6 +85,7 @@ public class Constants {
     public static final String STACK_TRACE = "StackTrace";
 
     // JWT claims for fine-grained authorization in business context.
+    public static final String AUDIT_INFO = "auditInfo";
     // The key for the subject token claims in auditInfo after security handler
     // This token is passed in from Authorization header
     public static final String SUBJECT_CLAIMS = "subject_claims";

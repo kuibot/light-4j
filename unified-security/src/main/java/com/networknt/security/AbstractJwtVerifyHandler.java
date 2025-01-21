@@ -48,17 +48,13 @@ public abstract class AbstractJwtVerifyHandler extends UndertowVerifyHandler imp
         if (logger.isDebugEnabled())
             logger.debug("JwtVerifyHandler.handleRequest starts.");
 
-        String reqPath = exchange.getRequestPath();
-
-        // if request path is in the skipPathPrefixes in the config, call the next handler directly to skip the security check.
-        if (config.getSkipPathPrefixes() != null && config.getSkipPathPrefixes().stream().anyMatch(reqPath::startsWith)) {
-            if(logger.isTraceEnabled())
-                logger.trace("Skip request path base on skipPathPrefixes for " + reqPath);
+        if(isSkipAuth(exchange)) {
+            if (logger.isDebugEnabled()) logger.debug("Skipped! JwtVerifyHandler.handleRequest ends.");
             Handler.next(exchange, next);
-            if (logger.isDebugEnabled())
-                logger.debug("JwtVerifyHandler.handleRequest ends.");
             return;
         }
+
+        String reqPath = exchange.getRequestPath();
         // only UnifiedSecurityHandler will have the jwkServiceIds as the third parameter.
         Status status = handleJwt(exchange, null, reqPath, null);
         if(status != null) {
@@ -123,15 +119,15 @@ public abstract class AbstractJwtVerifyHandler extends UndertowVerifyHandler imp
 
                     String clientId = claims.getStringClaimValue(Constants.CLIENT_ID_STRING);
                     String userId = claims.getStringClaimValue(Constants.USER_ID_STRING);
-                    String issuer = claims.getStringClaimValue(Constants.ISS_STRING);
+                    String issuer = claims.getStringClaimValue(Constants.ISS);
                     // try to get the cid as some OAuth tokens name it as cid like Okta.
                     if (clientId == null)
-                        clientId = claims.getStringClaimValue(Constants.CID_STRING);
+                        clientId = claims.getStringClaimValue(Constants.CID);
 
 
                     // try to get the uid as some OAuth tokens name it as uid like Okta.
                     if (userId == null)
-                        userId = claims.getStringClaimValue(Constants.UID_STRING);
+                        userId = claims.getStringClaimValue(Constants.UID);
 
                     auditInfo.put(Constants.USER_ID_STRING, userId);
                     auditInfo.put(Constants.SUBJECT_CLAIMS, claims);
@@ -238,6 +234,14 @@ public abstract class AbstractJwtVerifyHandler extends UndertowVerifyHandler imp
         return returnToken;
     }
 
+    /**
+     * If the jwt verification will be skipped or not.
+     *
+     * @param exchange - the current exchange
+     * @return - true to skip jwt verification
+     */
+    public abstract boolean isSkipAuth(HttpServerExchange exchange);
+
 
     /**
      * Gets the operation from the spec. If not defined or defined incorrectly, return null.
@@ -245,6 +249,7 @@ public abstract class AbstractJwtVerifyHandler extends UndertowVerifyHandler imp
      * @param exchange - the current exchange
      * @param auditInfo A map of audit info properties
      * @return - return A list of scopes from the spec
+     * @throws Exception - exception
      */
     public abstract List<String> getSpecScopes(HttpServerExchange exchange, Map<String, Object> auditInfo) throws Exception;
     /**
