@@ -3,6 +3,10 @@ package com.networknt.apikey;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.networknt.config.Config;
 import com.networknt.config.ConfigException;
+import com.networknt.config.schema.ArrayField;
+import com.networknt.config.schema.BooleanField;
+import com.networknt.config.schema.ConfigSchema;
+import com.networknt.config.schema.OutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@ConfigSchema(
+        configKey = "apikey",
+        configName = "apikey",
+        configDescription = "ApiKey Authentication Security Configuration for light-4j",
+        outputFormats = {
+                OutputFormat.JSON_SCHEMA,
+                OutputFormat.YAML
+        }
+)
 public class ApiKeyConfig {
     private static final Logger logger = LoggerFactory.getLogger(ApiKeyConfig.class);
 
@@ -21,9 +34,39 @@ public class ApiKeyConfig {
     public static final String API_KEY = "apiKey";
     public static final String PATH_PREFIX_AUTHS = "pathPrefixAuths";
 
+    @BooleanField(
+            configFieldName = ENABLED,
+            externalizedKeyName = ENABLED,
+            externalized = true,
+            defaultValue = true,
+            description = "Enable ApiKey Authentication Handler, default is false."
+    )
     boolean enabled;
+
+    @BooleanField(
+            configFieldName = HASH_ENABLED,
+            externalizedKeyName = HASH_ENABLED,
+            externalized = true,
+            description = "If API key hash is enabled. The API key will be hashed with PBKDF2WithHmacSHA1 before it is\n" +
+                          "stored in the config file. It is more secure than put the encrypted key into the config file.\n" +
+                          "The default value is false. If you want to enable it, you need to use the following repo\n" +
+                          "https://github.com/networknt/light-hash command line tool to hash the clear text key."
+    )
     boolean hashEnabled;
+
+    @ArrayField(
+            configFieldName = PATH_PREFIX_AUTHS,
+            externalizedKeyName = PATH_PREFIX_AUTHS,
+            externalized = true,
+            items = ApiKey.class,
+            description = "path prefix to the api key mapping. It is a list of map between the path prefix and the api key\n" +
+                    "for apikey authentication. In the handler, it loops through the list and find the matching path\n" +
+                    "prefix. Once found, it will check if the apikey is equal to allow the access or return an error.\n" +
+                    "The map object has three properties: pathPrefix, headerName and apiKey. Take a look at the test\n" +
+                    "resources/config folder for configuration examples.\n"
+    )
     List<ApiKey> pathPrefixAuths;
+
     private final Config config;
     private Map<String, Object> mappedConfig;
 
